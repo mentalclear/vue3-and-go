@@ -1,6 +1,6 @@
 # Working through chapters of the course here.
 
-(Course link)[https://www.udemy.com/course/working-with-vue-3-and-go/]
+[Course link](https://www.udemy.com/course/working-with-vue-3-and-go/)
 
 ## Project setup
 ```
