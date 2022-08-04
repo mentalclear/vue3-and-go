@@ -5,7 +5,7 @@ import (
 )
 
 type jsonResponse struct {
-	Error bool `json:"error"`
+	Error   bool   `json:"error"`
 	Message string `json:"messsage"`
 }
 
@@ -14,11 +14,11 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		UserName string `json:"email"`
 		Password string `json:"password"`
 	}
-	
+
 	var creds credentials
 	var payload jsonResponse
 
-	err := app.readJSON(w, r, &creds) 
+	err := app.readJSON(w, r, &creds)
 	if err != nil {
 		app.errorLog.Println(err)
 		payload.Error = true
