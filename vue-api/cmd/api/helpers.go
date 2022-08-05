@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
@@ -26,7 +27,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data in
 }
 
 func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
-	out, err := json.MarshalIndent(data, "", "\t") 
+	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -47,6 +48,8 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	return nil
 }
 
+// errorJSON takes an error, and optionally a response status code, and generates and sends
+// a json error response
 func (app *application) errorJSON(w http.ResponseWriter, err error, status ...int) {
 	statusCode := http.StatusBadRequest
 
@@ -54,9 +57,25 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 		statusCode = status[0]
 	}
 
+	var customErr error
+
+	switch {
+	case strings.Contains(err.Error(), "SQLSTATE 23505"):
+		customErr = errors.New("duplicate value violates unique constraint")
+		statusCode = http.StatusForbidden
+	case strings.Contains(err.Error(), "SQLSTATE 22001"):
+		customErr = errors.New("the value you are trying to insert is too large")
+		statusCode = http.StatusForbidden
+	case strings.Contains(err.Error(), "SQLSTATE 23503"):
+		customErr = errors.New("foreign key violation")
+		statusCode = http.StatusForbidden
+	default:
+		customErr = err
+	}
+
 	var payload jsonResponse
 	payload.Error = true
-	payload.Message = err.Error()
+	payload.Message = customErr.Error()
 
 	app.writeJSON(w, statusCode, payload)
 }
