@@ -243,16 +243,18 @@ type Token struct {
 	Expiry    time.Time `json:"expiry"`
 }
 
+// GetByToken takes a plain text token string, and looks up the full token from
+// the database. It returns a pointer to the Token model.
 func (t *Token) GetByToken(plainText string) (*Token, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, user_id, email, token, token_hash, password, created_at, updated_at expiry 
+	query := `select id, user_id, email, token, token_hash, created_at, updated_at, expiry
 			from tokens where token = $1`
 
 	var token Token
-	row := db.QueryRowContext(ctx, query, plainText)
 
+	row := db.QueryRowContext(ctx, query, plainText)
 	err := row.Scan(
 		&token.ID,
 		&token.UserID,
@@ -366,7 +368,7 @@ func (t *Token) Insert(token Token, u User) error {
 	token.Email = u.Email
 
 	// insert the new token
-	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry
+	stmt = `insert into tokens (user_id, email, token, token_hash, created_at, updated_at, expiry)
 		values ($1, $2, $3, $4, $5, $6, $7)`
 
 	_, err = db.ExecContext(ctx, stmt,

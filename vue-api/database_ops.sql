@@ -8,6 +8,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE UNIQUE INDEX unique_email ON users (email);
 
 CREATE TABLE tokens (
     id serial PRIMARY KEY,        
@@ -25,11 +26,26 @@ CREATE TABLE tokens (
       ON UPDATE CASCADE      
 );
 
+ALTER TABLE tokens
+ALTER COLUMN expiry TYPE TIMESTAMP WITH TIME ZONE;
 
 INSERT INTO users
 VALUES (1, 'admin@example.com', 'Admin', 'User', '$2a$12$T/mN3H5hT/p8vqf2uGhd8unrSMzsum8bitshu.IUNnoHrtZ.ObGqm', NOW(), NOW());
 
 SELECT * FROM users;
+
+SELECT * FROM tokens;
+
+
+DELETE FROM users WHERE id = 3;
+
+DELETE FROM tokens;
+
+
+
+
+
+
 
 
 
