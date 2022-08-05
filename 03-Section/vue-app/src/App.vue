@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { store } from '@/components/store';
 import TheHeader from './components/TheHeader.vue';
 import TheFooter from './components/TheFooter.vue';
 
@@ -15,6 +16,11 @@ export default {
   components: {
     TheHeader,
     TheFooter,
+  },
+  data() {
+    return {
+      store,
+    };
   },
 };
 </script>

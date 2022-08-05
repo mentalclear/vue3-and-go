@@ -32,11 +32,20 @@
           </li>
           <li class="nav-item">
             <RouterLink
+              v-if="store.token === ''"
               class="nav-link"
               to="/login"
             >
               Login
             </RouterLink>
+            <a
+              v-else
+              class="nav-link"
+              href="javascript:void(0);"
+              @click="logout"
+            >
+              Logout
+            </a>
           </li>
         </ul>
       </div>
@@ -45,7 +54,39 @@
 </template>
 
 <script>
+import { store } from '@/components/store';
+import router from '@/router/index';
 
+export default {
+  data() {
+    return {
+      store,
+    };
+  },
+  methods: {
+    logout() {
+      const payload = {
+        token: store.token,
+      };
+
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      };
+
+      fetch('http://localhost:8081/users/logout', requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.error) {
+            console.log(response.message);
+          } else {
+            store.token = '';
+            router.push('/login');
+          }
+        });
+    },
+  },
+};
 </script>
 
 <style scoped>

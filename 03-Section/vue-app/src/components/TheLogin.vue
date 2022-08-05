@@ -25,6 +25,7 @@
             name="password"
             required="true"
           />
+
           <hr>
           <label for="sbmt">
             <input
@@ -41,8 +42,12 @@
 </template>
 
 <script>
-import FormTag from './forms/FormTag.vue';
-import TextInput from './forms/TextInput.vue';
+import { store } from '@/components/store';
+// eslint-disable-next-line import/no-cycle
+import router from '@/router/index';
+import notie from 'notie';
+import FormTag from '@/components/forms/FormTag.vue';
+import TextInput from '@/components/forms/TextInput.vue';
 
 export default {
   name: 'TheLogin',
@@ -54,11 +59,12 @@ export default {
     return {
       email: '',
       password: '',
+      store,
     };
   },
   methods: {
     submitHandler() {
-      console.log('submitHandler call - success!');
+      console.log('submitHandler called - success!');
 
       const payload = {
         email: this.email,
@@ -72,11 +78,19 @@ export default {
 
       fetch('http://localhost:8081/users/login', requestOptions)
         .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            console.log('error:', data.message);
+        .then((response) => {
+          if (response.error) {
+            console.log('Error:', response.message);
+            notie.alert({
+              type: 'error',
+              text: response.message,
+              // stay: true,
+              // position: 'bottom',
+            });
           } else {
-            console.log(data);
+            console.log('Token:', response.data.token.token);
+            store.token = response.data.token.token;
+            router.push('/');
           }
         });
     },
