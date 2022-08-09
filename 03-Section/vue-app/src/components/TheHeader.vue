@@ -20,42 +20,44 @@
         id="navbarNav"
         class="collapse navbar-collapse"
       >
-        <ul class="navbar-nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink
+            <router-link
               class="nav-link active"
               aria-current="page"
               to="/"
             >
               Home
-            </RouterLink>
+            </router-link>
           </li>
           <li class="nav-item">
-            <RouterLink
-              v-if="store.token === ''"
+            <router-link
+              v-if="store.token == ''"
               class="nav-link"
               to="/login"
             >
               Login
-            </RouterLink>
+            </router-link>
             <a
               v-else
-              class="nav-link"
               href="javascript:void(0);"
+              class="nav-link"
               @click="logout"
-            >
-              Logout
-            </a>
+            >Logout</a>
           </li>
         </ul>
+
+        <span class="navbar-text">
+          {{ store.user.first_name ?? '' }}
+        </span>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
-import { store } from '@/components/store';
-import router from '@/router/index';
+import { store } from './store';
+import router from '../router/index';
 
 export default {
   data() {
@@ -81,6 +83,12 @@ export default {
             console.log(response.message);
           } else {
             store.token = '';
+            store.user = {};
+
+            document.cookie = '_site_data=; Path=/; '
+          + 'SameSite=Strict; Secure; '
+          + 'Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
             router.push('/login');
           }
         });
@@ -88,7 +96,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

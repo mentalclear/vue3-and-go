@@ -6,19 +6,20 @@
           Login
         </h1>
         <hr>
-        <FormTag
+        <form-tag
           name="myform"
           event="myevent"
           @myevent="submitHandler"
         >
-          <TextInput
+          <text-input
             v-model="email"
             label="Email"
             type="email"
             name="email"
             required="true"
           />
-          <TextInput
+
+          <text-input
             v-model="password"
             label="Password"
             type="password"
@@ -27,27 +28,25 @@
           />
 
           <hr>
-          <label for="sbmt">
-            <input
-              id="sbmt"
-              type="submit"
-              class="btn btn-primary"
-              value="Login"
-            >
-          </label>
-        </FormTag>
+
+          <input
+            type="submit"
+            class="btn btn-primary"
+            value="Login"
+          >
+        </form-tag>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { store } from '@/components/store';
-// eslint-disable-next-line import/no-cycle
-import router from '@/router/index';
 import notie from 'notie';
-import FormTag from '@/components/forms/FormTag.vue';
-import TextInput from '@/components/forms/TextInput.vue';
+import FormTag from './forms/FormTag.vue';
+import TextInput from './forms/TextInput.vue';
+import { store } from './store';
+// eslint-disable-next-line import/no-cycle
+import router from '../router/index';
 
 export default {
   name: 'TheLogin',
@@ -90,6 +89,26 @@ export default {
           } else {
             console.log('Token:', response.data.token.token);
             store.token = response.data.token.token;
+
+            store.user = {
+              id: response.data.user.id,
+              first_name: response.data.user.first_name,
+              last_name: response.data.user.last_name,
+              email: response.data.user.email,
+            };
+
+            // save info to cookie
+            const date = new Date();
+            const expDays = 1;
+            date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+            const expires = `expires=${date.toUTCString()}`;
+
+            // set the cookie
+            document.cookie = `_site_data=${
+              JSON.stringify(response.data)
+            }; ${
+              expires
+            }; path=/; SameSite=strict; Secure;`;
             router.push('/');
           }
         });
@@ -97,7 +116,3 @@ export default {
   },
 };
 </script>
-
-<style>
-
-</style>
