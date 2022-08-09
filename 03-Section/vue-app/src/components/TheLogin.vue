@@ -6,43 +6,47 @@
           Login
         </h1>
         <hr>
-        <FormTag
+        <form-tag
           name="myform"
           event="myevent"
           @myevent="submitHandler"
         >
-          <TextInput
+          <text-input
             v-model="email"
             label="Email"
             type="email"
             name="email"
             required="true"
           />
-          <TextInput
+
+          <text-input
             v-model="password"
             label="Password"
             type="password"
             name="password"
             required="true"
           />
+
           <hr>
-          <label for="sbmt">
-            <input
-              id="sbmt"
-              type="submit"
-              class="btn btn-primary"
-              value="Login"
-            >
-          </label>
-        </FormTag>
+
+          <input
+            type="submit"
+            class="btn btn-primary"
+            value="Login"
+          >
+        </form-tag>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import notie from 'notie';
 import FormTag from './forms/FormTag.vue';
 import TextInput from './forms/TextInput.vue';
+import { store } from './store';
+// eslint-disable-next-line import/no-cycle
+import router from '../router/index';
 
 export default {
   name: 'TheLogin',
@@ -54,11 +58,12 @@ export default {
     return {
       email: '',
       password: '',
+      store,
     };
   },
   methods: {
     submitHandler() {
-      console.log('submitHandler call - success!');
+      console.log('submitHandler called - success!');
 
       const payload = {
         email: this.email,
@@ -72,18 +77,42 @@ export default {
 
       fetch('http://localhost:8081/users/login', requestOptions)
         .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            console.log('error:', data.message);
+        .then((response) => {
+          if (response.error) {
+            console.log('Error:', response.message);
+            notie.alert({
+              type: 'error',
+              text: response.message,
+              // stay: true,
+              // position: 'bottom',
+            });
           } else {
-            console.log(data);
+            console.log('Token:', response.data.token.token);
+            store.token = response.data.token.token;
+
+            store.user = {
+              id: response.data.user.id,
+              first_name: response.data.user.first_name,
+              last_name: response.data.user.last_name,
+              email: response.data.user.email,
+            };
+
+            // save info to cookie
+            const date = new Date();
+            const expDays = 1;
+            date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+            const expires = `expires=${date.toUTCString()}`;
+
+            // set the cookie
+            document.cookie = `_site_data=${
+              JSON.stringify(response.data)
+            }; ${
+              expires
+            }; path=/; SameSite=strict; Secure;`;
+            router.push('/');
           }
         });
     },
   },
 };
 </script>
-
-<style>
-
-</style>

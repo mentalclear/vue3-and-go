@@ -20,34 +20,79 @@
         id="navbarNav"
         class="collapse navbar-collapse"
       >
-        <ul class="navbar-nav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink
+            <router-link
               class="nav-link active"
               aria-current="page"
               to="/"
             >
               Home
-            </RouterLink>
+            </router-link>
           </li>
           <li class="nav-item">
-            <RouterLink
+            <router-link
+              v-if="store.token == ''"
               class="nav-link"
               to="/login"
             >
               Login
-            </RouterLink>
+            </router-link>
+            <a
+              v-else
+              href="javascript:void(0);"
+              class="nav-link"
+              @click="logout"
+            >Logout</a>
           </li>
         </ul>
+
+        <span class="navbar-text">
+          {{ store.user.first_name ?? '' }}
+        </span>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import { store } from './store';
+import router from '../router/index';
 
+export default {
+  data() {
+    return {
+      store,
+    };
+  },
+  methods: {
+    logout() {
+      const payload = {
+        token: store.token,
+      };
+
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      };
+
+      fetch('http://localhost:8081/users/logout', requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.error) {
+            console.log(response.message);
+          } else {
+            store.token = '';
+            store.user = {};
+
+            document.cookie = '_site_data=; Path=/; '
+          + 'SameSite=Strict; Secure; '
+          + 'Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+            router.push('/login');
+          }
+        });
+    },
+  },
+};
 </script>
-
-<style scoped>
-
-</style>

@@ -30,14 +30,23 @@ ALTER TABLE tokens
 ALTER COLUMN expiry TYPE TIMESTAMP WITH TIME ZONE;
 
 INSERT INTO users
-VALUES (1, 'admin@example.com', 'Admin', 'User', '$2a$12$T/mN3H5hT/p8vqf2uGhd8unrSMzsum8bitshu.IUNnoHrtZ.ObGqm', NOW(), NOW());
+-- VALUES (1, 'admin@example.com', 'Admin', 'User', '$2a$12$T/mN3H5hT/p8vqf2uGhd8unrSMzsum8bitshu.IUNnoHrtZ.ObGqm', NOW(), NOW());
+VALUES (2, 'you@there.com', 'You', 'There', '$2a$12$T/mN3H5hT/p8vqf2uGhd8unrSMzsum8bitshu.IUNnoHrtZ.ObGqm', NOW(), NOW());
+
+UPDATE users 
+SET password = '$2a$12$3Lr8Z1VUvIC3UEJXZAkGJenZoNkK50QpCD9xW8JKn9RYkCrxqR24m'
+WHERE id = 2;
+
 
 SELECT * FROM users;
 
 SELECT * FROM tokens;
 
 
+
 DELETE FROM users WHERE id = 3;
+
+DELETE FROM users;
 
 DELETE FROM tokens;
 
