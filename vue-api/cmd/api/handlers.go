@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// jsonResponse is the type used for generic JSON responses
 type jsonResponse struct {
 	Error   bool        `json:"error"`
 	Message string      `json:"message"`
@@ -65,9 +66,9 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	// send back a response
 	payload = jsonResponse{
-		Error:   false,
+		Error: false,
 		Message: "logged in",
-		Data:    envelope{"token": token, "user": user},
+		Data: envelope{"token": token, "user": user},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, payload)
@@ -78,7 +79,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	var requestPayload struct {
-		Token string `josn:"token"`
+		Token string `json:"token"`
 	}
 
 	err := app.readJSON(w, r, &requestPayload)
@@ -94,7 +95,7 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := jsonResponse{
-		Error:   false,
+		Error: false,
 		Message: "logged out",
 	}
 

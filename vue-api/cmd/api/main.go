@@ -9,10 +9,14 @@ import (
 	"vue-api/internal/driver"
 )
 
+// config is the type for all application configuration
 type config struct {
-	port int
+	port int // what port do we want the web server to listen on
 }
 
+// application is the type for all data we want to share with the
+// various parts of our application. We will share this information in most
+// cases by using this type as the receiver for functions
 type application struct {
 	config      config
 	infoLog     *log.Logger
@@ -21,6 +25,7 @@ type application struct {
 	environment string
 }
 
+// main is the main entry point for our application
 func main() {
 	var cfg config
 	cfg.port = 8081
@@ -30,17 +35,18 @@ func main() {
 
 	dsn := os.Getenv("DSN")
 	environment := os.Getenv("ENV")
-	db, err := driver.ConnectPostgress(dsn)
+
+	db, err := driver.ConnectPostgres(dsn)
 	if err != nil {
-		log.Fatal("Cannot connect to the DB")
+		log.Fatal("Cannot connect to database")
 	}
 	defer db.SQL.Close()
 
 	app := &application{
-		config:      cfg,
-		infoLog:     infoLog,
-		errorLog:    errorLog,
-		models:      data.New(db.SQL),
+		config:   cfg,
+		infoLog:  infoLog,
+		errorLog: errorLog,
+		models:   data.New(db.SQL),
 		environment: environment,
 	}
 
@@ -50,8 +56,9 @@ func main() {
 	}
 }
 
+// serve starts the web server
 func (app *application) serve() error {
-	app.infoLog.Println("API listening on port:", app.config.port)
+	app.infoLog.Println("API listening on port", app.config.port)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", app.config.port),
