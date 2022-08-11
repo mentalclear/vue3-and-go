@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"time"
+	"vue-api/internal/data"
 )
 
 // jsonResponse is the type used for generic JSON responses
@@ -66,9 +67,9 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	// send back a response
 	payload = jsonResponse{
-		Error: false,
+		Error:   false,
 		Message: "logged in",
-		Data: envelope{"token": token, "user": user},
+		Data:    envelope{"token": token, "user": user},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, payload)
@@ -95,9 +96,26 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := jsonResponse{
-		Error: false,
+		Error:   false,
 		Message: "logged out",
 	}
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
+}
+
+func (app *application) AllUsers(w http.ResponseWriter, r *http.Request) {
+	var users data.User
+	all, err := users.GetAll()
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: "success",
+		Data:    envelope{"users": all},
+	}
+
+	app.writeJSON(w, http.StatusOK, payload)
 }

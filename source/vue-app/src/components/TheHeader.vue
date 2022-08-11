@@ -121,6 +121,8 @@
 <script>
 import { store } from './store';
 import router from '../router/index';
+// eslint-disable-next-line import/no-cycle
+import Security from './security';
 
 export default {
   data() {
@@ -134,12 +136,7 @@ export default {
         token: store.token,
       };
 
-      const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      };
-
-      fetch('http://localhost:8081/users/logout', requestOptions)
+      fetch(`${process.env.VUE_APP_API_URL}/users/logout`, Security.requestOptions(payload))
         .then((response) => response.json())
         .then((response) => {
           if (response.error) {

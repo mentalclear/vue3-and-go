@@ -9,3 +9,14 @@
     </div>
   </div>
 </template>
+
+<script>
+// eslint-disable-next-line import/no-cycle
+import Security from './security';
+
+export default {
+  beforeMount() {
+    Security.requireToken();
+  },
+};
+</script>
