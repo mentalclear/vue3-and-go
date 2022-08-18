@@ -1,3 +1,5 @@
+import { response } from 'express';
+import { response } from 'express';
 <template>
   <div class="container">
     <div class="row">
@@ -51,6 +53,32 @@
             :value="user.email"
             name="password"
           />
+
+          <hr>
+
+          <div class="float-start">
+            <input
+              type="submit"
+              class="btn btn-primary me-2"
+              value="Save"
+            >
+            <RouterLink
+              to="/admin/users"
+              class="btn btn-outline-secondary"
+            >
+              Cancel
+            </RouterLink>
+          </div>
+          <div class="float-end">
+            <a
+              v-if="($route.params.userId > 0)
+                && (parseInt(String($route.params.userId), 10) !== store.user.id)"
+              class="btn btn-danger"
+              href="javascript:void(0);"
+              @click="confirmDelete(user.id)"
+            > Delete </a>
+          </div>
+          <div class="clearfix" />
         </FormTag>
       </div>
     </div>
@@ -58,7 +86,8 @@
 </template>
 
 <script>
-// import notie from 'notie';
+import notie from 'notie';
+import { store } from './store';
 // eslint-disable-next-line import/no-cycle
 import Security from './security';
 import FormTag from './forms/FormTag.vue';
@@ -78,6 +107,7 @@ export default {
         email: '',
         password: '',
       },
+      store,
     };
   },
   beforeMount() {
@@ -90,6 +120,37 @@ export default {
   },
   methods: {
     submitHandler() {
+      const payload = {
+        id: parseInt(String(this.$route.userId), 10),
+        first_name: this.user.first_name,
+        last_name: this.user.last_name,
+        email: this.user.email,
+        password: this.user.password,
+      };
+
+      fetch(`${process.env.VUE_APP_API_URL}/admin/users/save`, Security.requestOptions(payload))
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            notie.alert({
+              type: 'error',
+              text: data.message,
+            });
+          } else {
+            notie.alert({
+              type: 'success',
+              text: 'Changes saved',
+            });
+          }
+        })
+        .catch((error) => {
+          notie.alert({
+            type: 'error',
+            text: error,
+          });
+        });
+    },
+    confirmDelete() {
 
     },
   },
