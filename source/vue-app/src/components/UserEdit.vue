@@ -42,7 +42,7 @@ import { response } from 'express';
             type="password"
             required="true"
             label="Password"
-            :value="user.email"
+            :value="user.password"
             name="password"
           />
           <TextInput
@@ -50,7 +50,8 @@ import { response } from 'express';
             v-model="user.password"
             type="password"
             label="Password"
-            :value="user.email"
+            help="Leave empty to keep existing password"
+            :value="user.password"
             name="password"
           />
 
@@ -115,7 +116,20 @@ export default {
 
     if (parseInt(String(this.$route.params.userId), 10) > 0) {
       // editing existing user
-      // TODO - get user from the DB
+      fetch(`${process.env.VUE_APP_API_URL}/admin/users/get/${this.$route.params.userId}`, Security.requestOptions(''))
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            notie.alert({
+              type: 'error',
+              text: data.message,
+            });
+          } else {
+            this.user = data;
+            // make password empty for existing users:
+            this.user.password = '';
+          }
+        });
     }
   },
   methods: {
@@ -150,8 +164,34 @@ export default {
           });
         });
     },
-    confirmDelete() {
+    confirmDelete(id) {
+      notie.confirm({
+        text: 'Are you sure you want to delete this user?',
+        submitText: 'Delete',
+        submitCallback: () => {
+          console.log('will delete', id);
 
+          const payload = {
+            id,
+          };
+
+          fetch(`${process.env.VUE_APP_API_URL}/admin/users/delete`, Security.requestOptions(payload))
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.error) {
+                notie.alert({
+                  type: 'error',
+                  text: data.message,
+                });
+              } else {
+                notie.alert({
+                  type: 'success',
+                  text: 'User deleted',
+                });
+              }
+            });
+        },
+      });
     },
   },
 };
