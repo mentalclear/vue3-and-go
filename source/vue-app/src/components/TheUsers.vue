@@ -8,7 +8,10 @@
       </div>
       <hr>
 
-      <table class="table table-compact table-striped">
+      <table
+        v-if="ready"
+        class="table table-compact table-striped"
+      >
         <thead>
           <tr>
             <th>User</th>
@@ -33,19 +36,24 @@
           </tr>
         </tbody>
       </table>
+
+      <p v-else>
+        Loading...
+      </p>
     </div>
   </div>
 </template>
 
 <script>
-import notie from 'notie';
 // eslint-disable-next-line import/no-cycle
 import Security from './security';
 
 export default {
+  emits: ['error'],
   data() {
     return {
       users: [],
+      ready: false,
     };
   },
 
@@ -56,19 +64,14 @@ export default {
       .then((response) => response.json())
       .then((response) => {
         if (response.error) {
-          notie.alert({
-            type: 'error',
-            text: response.message,
-          });
+          this.$emit('error', response.message);
         } else {
           this.users = response.data.users;
+          this.ready = true;
         }
       })
       .catch((error) => {
-        notie.alert({
-          type: 'error',
-          text: error,
-        });
+        this.$emit('error', error);
       });
   },
 };
