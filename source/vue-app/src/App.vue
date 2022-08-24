@@ -2,9 +2,11 @@
   <TheHeader />
   <div>
     <router-view
+      :key="componentKey"
       @success="success"
       @error="error"
       @warning="warning"
+      @force-update="forceUpdate"
     />
   </div>
   <TheFooter />
@@ -29,6 +31,7 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
       store,
     };
   },
@@ -67,6 +70,9 @@ export default {
         type: 'warning',
         text: msg,
       });
+    },
+    forceUpdate() {
+      this.componentKey += 1;
     },
   },
 };

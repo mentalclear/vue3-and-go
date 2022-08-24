@@ -1,5 +1,3 @@
-import { response } from 'express';
-import { response } from 'express';
 <template>
   <div class="container">
     <div class="row">
@@ -54,6 +52,36 @@ import { response } from 'express';
             :value="user.password"
             name="password"
           />
+
+          <div class="form-check">
+            <label
+              class="form-check-label"
+              for="user-active"
+            >
+              <input
+                id="user-active"
+                v-model="user.active"
+                class="form-check-input"
+                type="radio"
+                :value="1"
+              >
+              Active</label>
+          </div>
+
+          <div class="form-check">
+            <label
+              class="form-check-label"
+              for="user-active-2"
+            >
+              <input
+                id="user-active-2"
+                v-model="user.active"
+                class="form-check-input"
+                type="radio"
+                :value="0"
+              >
+              Inactive</label>
+          </div>
 
           <hr>
 
@@ -110,6 +138,7 @@ export default {
         last_name: '',
         email: '',
         password: '',
+        active: 0,
       },
       store,
     };
@@ -140,6 +169,7 @@ export default {
         last_name: this.user.last_name,
         email: this.user.email,
         password: this.user.password,
+        active: this.user.active,
       };
 
       fetch(`${process.env.VUE_APP_API_URL}/admin/users/save`, Security.requestOptions(payload))
