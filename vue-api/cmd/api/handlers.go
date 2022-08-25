@@ -215,7 +215,7 @@ func (app *application) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload := jsonResponse{
-		Error: false,
+		Error:   false,
 		Message: "User deleted",
 	}
 
@@ -250,9 +250,31 @@ func (app *application) LogUserOutAndSetInactive(w http.ResponseWriter, r *http.
 	}
 
 	payload := jsonResponse{
-		Error: false,
+		Error:   false,
 		Message: "user logged out and set to inactive",
 	}
 
 	_ = app.writeJSON(w, http.StatusAccepted, payload)
+}
+
+func (app *application) ValidateToken(w http.ResponseWriter, r *http.Request) {
+	var requestPayload struct {
+		Token string `json:"token"`
+	}
+
+	err := app.readJSON(w, r, &requestPayload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	valid := false
+	valid, _ = app.models.Token.ValidToken(requestPayload.Token)
+
+	payload := jsonResponse{
+		Error: false,
+		Data:  valid,
+	}
+
+	_ = app.writeJSON(w, http.StatusOK, payload)
 }

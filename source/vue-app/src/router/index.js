@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+// eslint-disable-next-line import/no-cycle
+import Security from '@/components/security';
 import TheBody from '../components/TheBody.vue';
 import TheLogin from '../components/TheLogin.vue';
 import TheBooks from '../components/TheBooks.vue';
@@ -54,6 +56,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(() => {
+  Security.checkToken();
 });
 
 export default router;
