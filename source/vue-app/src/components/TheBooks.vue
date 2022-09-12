@@ -65,12 +65,13 @@
                 class="card me-2 ms-1 mb-3"
                 style="width: 10rem;"
               >
-                <img
-                  :src="`${imgPath}/covers/${b.slug}.jpg`"
-                  class="card-img-top"
-                  :alt="`cover for ${b.title}`"
-                >
-
+                <RouterLink :to="`/books/${b.slug}`">
+                  <img
+                    :src="`${imgPath}/covers/${b.slug}.jpg`"
+                    class="card-img-top"
+                    :alt="`cover for ${b.title}`"
+                  >
+                </RouterLink>
                 <div class="card-body text-center">
                   <h6 class="card-title">
                     {{ b.title }}
