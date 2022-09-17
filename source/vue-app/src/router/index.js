@@ -2,9 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 // eslint-disable-next-line import/no-cycle
 import Security from '@/components/security';
 import TheBody from '../components/TheBody.vue';
-import TheLogin from '../components/TheLogin.vue';
-import TheBooks from '../components/TheBooks.vue';
-import TheBook from '../components/TheBook.vue';
+// import TheLogin from '../components/TheLogin.vue';
+import LoginComposition from '../components/TheLogin.vue';
+// import TheBooks from '../components/TheBooks.vue';
+import BooksComposition from '../components/BooksComposition.vue';
+import BookComposition from '../components/BookComposition.vue';
+// import TheBook from '../components/TheBook.vue';
 import BooksAdmin from '../components/BooksAdmin.vue';
 import BookEdit from '../components/BookEdit.vue';
 import TheUsers from '../components/TheUsers.vue';
@@ -18,18 +21,24 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'Login',
-    component: TheLogin,
+    // name: 'Login',
+    // component: TheLogin,
+    name: 'LoginComposition',
+    component: LoginComposition,
   },
   {
     path: '/books',
-    name: 'Books',
-    component: TheBooks,
+    // name: 'Books',
+    name: 'BooksComposition',
+    // component: TheBooks,
+    component: BooksComposition,
   },
   {
     path: '/books/:bookName',
-    name: 'Book',
-    component: TheBook,
+    // name: 'Book',
+    // component: TheBook,
+    name: 'BookComposition',
+    component: BookComposition,
   },
   {
     path: '/admin/books',

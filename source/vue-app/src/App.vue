@@ -9,7 +9,7 @@
       @warning="warning"
       @force-update="forceUpdate"
     >
-      <keep-alive include="TheBooks">
+      <keep-alive include="BooksComposition">
         <component
           :is="Component"
         />
