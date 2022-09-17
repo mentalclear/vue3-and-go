@@ -50,6 +50,7 @@ SELECT * FROM users;
 
 SELECT * FROM tokens;
 
+SELECT * FROM authors;
 
 
 DELETE FROM users WHERE id = 3;
