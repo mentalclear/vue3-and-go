@@ -3,12 +3,16 @@
     <div class="row">
       <div class="col-md-2">
         <img
+          v-if="ready"
           class="img-fluid img-thumbnail"
           :src="`${imgPath}/covers/${book.slug}.jpg`"
           alt="cover"
         >
       </div>
-      <div class="col-md-10">
+      <div
+        v-if="ready"
+        class="col-md-10"
+      >
         <h3 class="mt-3">
           {{ book.title }}
         </h3><hr>
@@ -19,7 +23,9 @@
         <p>
           {{ book.description }}
         </p>
-        <p>{{ book }}</p>
+      </div>
+      <div v-else>
+        <p>Loading...</p>
       </div>
     </div>
   </div>
@@ -30,11 +36,12 @@ export default {
   emits: ['error'],
   data() {
     return {
-      book: { author: {} },
+      book: { },
       imgPath: process.env.VUE_APP_IMAGE_URL,
+      ready: false,
     };
   },
-  beforeMount() {
+  mounted() {
     fetch(`${process.env.VUE_APP_API_URL}/books/${this.$route.params.bookName}`)
       .then((response) => response.json())
       .then((data) => {
@@ -42,6 +49,7 @@ export default {
           this.$emit('error', data.message);
         } else {
           this.book = data.data;
+          this.ready = true;
         }
       });
   },

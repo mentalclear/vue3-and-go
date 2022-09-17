@@ -101,6 +101,7 @@
 import { store } from '@/components/store';
 
 export default {
+  name: 'TheBooks',
   emits: ['error'],
   data() {
     return {
